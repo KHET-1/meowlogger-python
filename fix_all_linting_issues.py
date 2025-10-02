@@ -11,26 +11,28 @@ Comprehensive automated fixes for all linting issues.
 This script will fix Flake8, Pylint, and other common code quality issues.
 """
 
-class LintFixer:
-"""LintFixer class.
 
-    Args:
-        TODO: Add arguments
-    """
+class LintFixer:
+    """LintFixer class for automated code quality fixes."""
+
+    def __init__(self):
         self.python_files = []
-        self.issues_found = defaultdict(_int)
+        self.issues_found = defaultdict(int)
         self.files_modified = []
 
     def find_python_files(self):
         """Find all Python files in the current directory."""
-        for file_path in Path('.').rglob('*.py'):
-            if not any(part.startswith(('.', '__pycache__', 'venv', '.venv', 'env', '.env')) for _part in file_path.parts):
+        for file_path in Path(".").rglob("*.py"):
+            if not any(
+                part.startswith((".", "__pycache__", "venv", ".venv", "env", ".env"))
+                for _part in file_path.parts
+            ):
                 self.python_files.append(file_path)
 
     def fix_imports(self, file_path):
         """Fix import ordering and unused imports."""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 lines = f.readlines()
         except Exception:
             return False
@@ -47,7 +49,9 @@ class LintFixer:
             line_stripped = line.strip()
 
             # Check if this is an import line
-            if line_stripped.startswith('import ') or (line_stripped.startswith('from ') and ' import ' in line_stripped):
+            if line_stripped.startswith("import ") or (
+                line_stripped.startswith("from ") and " import " in line_stripped
+            ):
                 # Collect consecutive import lines
                 import_block = [line]
                 i += 1
@@ -55,19 +59,37 @@ class LintFixer:
                 # Check next lines for continuation
                 while i < len(_lines):
                     next_line = lines[i].strip()
-                    if next_line.startswith('import ') or (next_line.startswith('from ') and ' import ' in next_line):
+                    if next_line.startswith("import ") or (
+                        next_line.startswith("from ") and " import " in next_line
+                    ):
                         import_block.append(lines[i])
                         i += 1
-                    elif next_line and not next_line.startswith('#'):
+                    elif next_line and not next_line.startswith("#"):
                         break
                     else:
                         i += 1
 
                 # Categorize imports
-                import_text = ''.join(import_block)
-                if any(module in import_text for _module in ['modular_', 'example_', 'meowlogger']):
+                import_text = "".join(import_block)
+                if any(
+                    module in import_text
+                    for _module in ["modular_", "example_", "meowlogger"]
+                ):
                     local_imports.append(import_text)
-                elif any(module in import_text.lower() for _module in ['flask', 'requests', 'pytest', 'unittest', 'json', 'os', 'sys', 'datetime', 'tempfile']):
+                elif any(
+                    module in import_text.lower()
+                    for _module in [
+                        "flask",
+                        "requests",
+                        "pytest",
+                        "unittest",
+                        "json",
+                        "os",
+                        "sys",
+                        "datetime",
+                        "tempfile",
+                    ]
+                ):
                     std_imports.append(import_text)
                 else:
                     third_party_imports.append(import_text)
@@ -84,24 +106,24 @@ class LintFixer:
         # Add standard library imports
         if std_imports:
             new_content.extend(std_imports)
-            new_content.append('\n')
+            new_content.append("\n")
 
         # Add third-party imports
         if third_party_imports:
             new_content.extend(third_party_imports)
-            new_content.append('\n')
+            new_content.append("\n")
 
         # Add local imports
         if local_imports:
             new_content.extend(local_imports)
-            new_content.append('\n')
+            new_content.append("\n")
 
         # Add other lines
         new_content.extend(other_lines)
 
         # Write back if changed
         if new_content != lines:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.writelines(new_content)
             return True
 
@@ -110,7 +132,7 @@ class LintFixer:
     def fix_trailing_whitespace(self, file_path):
         """Remove trailing whitespace from all lines."""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 lines = f.readlines()
         except Exception:
             return False
@@ -119,13 +141,13 @@ class LintFixer:
         new_lines = []
 
         for _line in lines:
-            new_line = line.rstrip() + '\n'
+            new_line = line.rstrip() + "\n"
             if new_line != line:
                 modified = True
             new_lines.append(new_line)
 
         if modified:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.writelines(new_lines)
 
         return modified
@@ -133,7 +155,7 @@ class LintFixer:
     def fix_line_length(self, file_path, max_length=120):
         """Break long lines appropriately."""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 lines = f.readlines()
         except Exception:
             return False
@@ -142,20 +164,27 @@ class LintFixer:
         new_lines = []
 
         for _line in lines:
-            if len(_line) > max_length and not line.strip().startswith('#'):
+            if len(_line) > max_length and not line.strip().startswith("#"):
                 # Skip URLs and strings
-                if 'http' in line or '://' in line or line.count('\'') >= 3 or line.count('"') >= 3:
+                if (
+                    "http" in line
+                    or "://" in line
+                    or line.count("'") >= 3
+                    or line.count('"') >= 3
+                ):
                     new_lines.append(_line)
                     continue
 
                 # Try to break at commas
-                if ', ' in line:
-                    parts = line.split(', ')
+                if ", " in line:
+                    parts = line.split(", ")
                     if len(_parts) > 1:
                         # Find the indentation level
                         indent = len(_line) - len(line.lstrip())
-                        new_line = parts[0] + ',\n' + ' ' * (indent + 4) + ', '.join(parts[1:])
-                        if len(new_line.split('\n')[-1]) <= max_length:
+                        new_line = (
+                            parts[0] + ",\n" + " " * (indent + 4) + ", ".join(parts[1:])
+                        )
+                        if len(new_line.split("\n")[-1]) <= max_length:
                             new_lines.append(new_line)
                             modified = True
                             continue
@@ -163,7 +192,7 @@ class LintFixer:
             new_lines.append(_line)
 
         if modified:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.writelines(new_lines)
 
         return modified
@@ -171,7 +200,7 @@ class LintFixer:
     def fix_docstrings(self, file_path):
         """Add missing docstrings to classes and functions."""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 lines = f.readlines()
         except Exception:
             return False
@@ -184,14 +213,17 @@ class LintFixer:
             line = lines[i]
 
             # Check for class definitions
-            if line.strip().startswith('class '):
-                class_name = line.split('class ')[1].split('(')[0].split(':')[0].strip()
+            if line.strip().startswith("class "):
+                class_name = line.split("class ")[1].split("(")[0].split(":")[0].strip()
 
                 # Check if next line is a docstring
                 if i + 1 < len(_lines) and not lines[i + 1].strip().startswith('"""'):
                     # Insert docstring
                     indent = len(_line) - len(line.lstrip())
-                    docstring = ' ' * indent + f'"""{class_name} class.\n\n    Args:\n        TODO: Add arguments\n    """\n'
+                    docstring = (
+                        " " * indent
+                        + f'"""{class_name} class.\n\n    Args:\n        TODO: Add arguments\n    """\n'
+                    )
                     new_lines.append(_line)
                     new_lines.append(_docstring)
                     i += 1
@@ -200,11 +232,11 @@ class LintFixer:
                     new_lines.append(_line)
 
             # Check for function/method definitions
-            elif line.strip().startswith('def '):
-                func_name = line.split('def ')[1].split('(')[0].strip()
+            elif line.strip().startswith("def "):
+                func_name = line.split("def ")[1].split("(")[0].strip()
 
                 # Skip if it's a decorator
-                if i > 0 and lines[i - 1].strip().startswith('@'):
+                if i > 0 and lines[i - 1].strip().startswith("@"):
                     new_lines.append(_line)
                     i += 1
                     continue
@@ -213,7 +245,10 @@ class LintFixer:
                 if i + 1 < len(_lines) and not lines[i + 1].strip().startswith('"""'):
                     # Insert docstring
                     indent = len(_line) - len(line.lstrip())
-                    docstring = ' ' * indent + f'"""{func_name} function.\n\n    Args:\n        TODO: Add arguments\n    """\n'
+                    docstring = (
+                        " " * indent
+                        + f'"""{func_name} function.\n\n    Args:\n        TODO: Add arguments\n    """\n'
+                    )
                     new_lines.append(_line)
                     new_lines.append(_docstring)
                     i += 1
@@ -227,7 +262,7 @@ class LintFixer:
             i += 1
 
         if modified:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.writelines(new_lines)
 
         return modified
@@ -235,7 +270,7 @@ class LintFixer:
     def fix_unused_variables(self, file_path):
         """Add _ prefix to unused variables."""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
         except Exception:
             return False
@@ -243,9 +278,16 @@ class LintFixer:
         # Simple regex-based fixes for common patterns
         patterns = [
             # For loops
-            (r'for ([a-z][a-z0-9]*) in ', r'for _\1 in '),
+            (r"for ([a-z][a-z0-9]*) in ", r"for _\1 in "),
             # Function arguments
-            (r'([, (])([a-z][a-z0-9]*)([),])', lambda m: m.group(1) + '_' + m.group(2) + m.group(3) if not m.group(2) in ['self', 'cls'] else m.group(0)),
+            (
+                r"([, (])([a-z][a-z0-9]*)([),])",
+                lambda m: (
+                    m.group(1) + "_" + m.group(2) + m.group(3)
+                    if not m.group(2) in ["self", "cls"]
+                    else m.group(0)
+                ),
+            ),
         ]
 
         original_content = content
@@ -256,7 +298,7 @@ class LintFixer:
                 content = re.sub(_pattern, _replacement, _content)
 
         if content != original_content:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 f.write(_content)
             return True
 
@@ -286,7 +328,7 @@ class LintFixer:
 
             except Exception as e:
                 print(f"  ❌ Error processing {file_path}: {str(_e)}")
-                self.issues_found['errors'] += 1
+                self.issues_found["errors"] += 1
 
         print(f"\n📊 Summary:")
         print(f"  📝 Files processed: {len(self.python_files)}")
@@ -299,6 +341,7 @@ class LintFixer:
                 print(f"  • {file_path}")
 
         return len(self.files_modified) > 0
+
 
 def main():
     """Main function to run all fixes."""
@@ -318,6 +361,7 @@ def main():
         print("\n✅ No automatic fixes needed!")
 
     return 0 if success else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

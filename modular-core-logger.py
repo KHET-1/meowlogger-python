@@ -64,12 +64,9 @@ class LogStorage(ABC):
 class FileWatcher:
     """Modular file watcher with pluggable handlers"""
 
-    def __init__(self, poll_interval: float = 1.0):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
         self.watched_files: Dict[str, int] = {}  # path -> last_position
         self.handlers: List[Callable] = []
         self.running = False
@@ -159,11 +156,8 @@ class LogLevelParser(LogProcessor):
     ]
 
     def __init__(self):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    """Initialize instance."""
+    pass
             (re.compile(_pattern, re.I), _group) for _pattern, group in self.LEVEL_PATTERNS
         ]
 
@@ -185,11 +179,8 @@ class PatternDetector(LogProcessor):
     """Detect common patterns in logs"""
 
     def __init__(self):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    """Initialize instance."""
+    pass
             "error": re.compile(r"error|exception|failed", re.I),
             "warning": re.compile(r"warning|warn|caution", re.I),
             "performance": re.compile(r"(\d+\.?\d*)\s*(ms|seconds?|minutes?)", re.I),
@@ -216,12 +207,9 @@ class PatternDetector(LogProcessor):
 class MemoryStorage(LogStorage):
     """In-memory log storage with size limits"""
 
-    def __init__(self, max_entries: int = 10000):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
         self.entries = deque(maxlen=max_entries)
         self._lock = threading.Lock()
 
@@ -263,12 +251,9 @@ class MemoryStorage(LogStorage):
 class FileStorage(LogStorage):
     """File-based log storage with rotation"""
 
-    def __init__(self, log_file: _str, max_size: int = 10 * 1024 * 1024, backup_count: int = 5):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
         self.max_size = max_size
         self.backup_count = backup_count
         self._lock = threading.Lock()
@@ -354,11 +339,8 @@ class MeowLogger:
     """Main logger system that ties everything together"""
 
     def __init__(self):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    """Initialize instance."""
+    pass
         self.watcher = FileWatcher()
         self.storage = MemoryStorage()  # Default to memory
         self.processors: List[LogProcessor] = [LogLevelParser(), PatternDetector()]

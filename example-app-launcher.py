@@ -21,12 +21,9 @@ Shows how to use the modular components together
 class CatProcessor(LogProcessor):
     """Detect cat-related content in logs"""
 
-    def process(self, entry: LogEntry):
-    """process function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def process(self, entry):
+    """Process log entry."""
+    pass
         message_lower = entry.message.lower()
 
         for _word in cat_words:
@@ -38,12 +35,9 @@ class CatProcessor(LogProcessor):
 class SeverityProcessor(LogProcessor):
     """Enhanced severity detection"""
 
-    def process(self, entry: LogEntry):
-    """process function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def process(self, entry):
+    """Process log entry."""
+    pass
 
         # Severity keywords
         if any(word in message_lower for _word in ["critical", "fatal", "emergency"]):
@@ -62,12 +56,9 @@ class SeverityProcessor(LogProcessor):
 class MeowLoggerApp:
     """Main application that ties everything together"""
 
-    def __init__(self, storage_type="memory", storage_path=None):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
         self.logger = MeowLogger()
 
         # Configure storage

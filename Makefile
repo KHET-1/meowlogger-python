@@ -56,3 +56,4 @@ ci: ## Run CI pipeline locally
 	$(MAKE) quality-gate
 
 all: clean install-dev quality-gate ## Clean, install, and run all quality checks
+

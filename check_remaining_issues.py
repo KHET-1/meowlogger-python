@@ -7,13 +7,17 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def run_command(cmd, cwd=None):
     """Run a command and return the output."""
     try:
-        result = subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
+        result = subprocess.run(
+            cmd, shell=True, cwd=cwd, capture_output=True, text=True
+        )
         return result.stdout, result.stderr, result.returncode
     except Exception as e:
         return "", str(e), 1
+
 
 def main():
     print("🔍 Checking remaining linting issues...")
@@ -21,7 +25,9 @@ def main():
 
     # Check Flake8
     print("\n📋 FLAKE8 RESULTS:")
-    stdout, stderr, returncode = run_command("flake8 . --count", "c:\\Users\\credi\\Desktop\\meowlogger")
+    stdout, stderr, returncode = run_command(
+        "flake8 . --count", "c:\\Users\\credi\\Desktop\\meowlogger"
+    )
 
     if returncode == 0:
         print("✅ No Flake8 issues found!")
@@ -34,7 +40,10 @@ def main():
 
     # Check Pylint
     print("\n🔧 PYLINT RESULTS:")
-    stdout, stderr, returncode = run_command("pylint --rcfile=.pylintrc modular_*.py quality-tests-complete.py", "c:\\Users\\credi\\Desktop\\meowlogger")
+    stdout, stderr, returncode = run_command(
+        "pylint --rcfile=.pylintrc modular_*.py quality-tests-complete.py",
+        "c:\\Users\\credi\\Desktop\\meowlogger",
+    )
 
     if returncode == 0:
         print("✅ No Pylint issues found!")
@@ -65,6 +74,7 @@ def main():
     print("2. Fix any remaining issues manually")
     print("3. Run: python -m pytest (if tests exist)")
     print("4. Commit changes with: git commit -m 'Fix linting issues'")
+
 
 if __name__ == "__main__":
     main()

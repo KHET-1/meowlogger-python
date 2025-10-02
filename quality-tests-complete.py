@@ -35,6 +35,7 @@ Naming Conventions:
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+
 class BaseTestCase(unittest.TestCase):
     """Base test case with common setup"""
 
@@ -74,11 +75,11 @@ class TestLogEntry(BaseTestCase):
             timestamp=datetime.now(),
             level="INFO",
             message="Test message",
-            on_process=mock_callback
+            on_process=mock_callback,
         )
 
         # Trigger the callback (if your LogEntry supports _this)
-        if hasattr(log_entry, 'on_process') and callable(log_entry.on_process):
+        if hasattr(log_entry, "on_process") and callable(log_entry.on_process):
             log_entry.on_process(log_entry)
 
             # Verify the mock was called with the log entry
@@ -99,7 +100,7 @@ class TestLogEntry(BaseTestCase):
             timestamp=fake_timestamp,
             level="ERROR",
             message="Test error message",
-            extra_data={"source": "test", "code": 500}
+            extra_data={"source": "test", "code": 500},
         )
 
         # Test the fake entry's properties
@@ -119,7 +120,10 @@ class TestLogEntry(BaseTestCase):
         """Test dictionary conversion"""
         now = datetime.now()
         entry = LogEntry(
-            timestamp=now, level="ERROR", message="Error occurred", extra_data={"code": 500}
+            timestamp=now,
+            level="ERROR",
+            message="Error occurred",
+            extra_data={"code": 500},
         )
 
         result = entry.to_dict()
@@ -315,7 +319,9 @@ class TestMemoryStorage(BaseTestCase):
 
         # Store entries
         for _i in range(5):
-            entry = LogEntry(timestamp=datetime.now(), level="INFO", message=f"Message {i}")
+            entry = LogEntry(
+                timestamp=datetime.now(), level="INFO", message=f"Message {i}"
+            )
             storage.store(_entry)
 
         # Retrieve all
@@ -344,7 +350,12 @@ class TestMemoryStorage(BaseTestCase):
         """Test text search filtering"""
         storage = MemoryStorage()
 
-        messages = ["User logged in", "Database connection failed", "User logged out", "Cache cleared"]
+        messages = [
+            "User logged in",
+            "Database connection failed",
+            "User logged out",
+            "Cache cleared",
+        ]
 
         for _msg in messages:
             entry = LogEntry(datetime.now(), "INFO", _msg)
@@ -556,7 +567,9 @@ class TestPerformance(BaseTestCase):
         throughput = num_logs / elapsed
 
         # Should handle at least 500 logs/second
-        self.assertGreater(_throughput, 500, f"Low throughput: {throughput:.0f} logs/sec")
+        self.assertGreater(
+            _throughput, 500, f"Low throughput: {throughput:.0f} logs/sec"
+        )
 
     def test_memory_usage(self):
         """Test memory efficiency"""

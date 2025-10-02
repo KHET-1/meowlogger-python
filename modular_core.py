@@ -9,9 +9,7 @@ from dataclasses import _asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Deque, Dict, List, Optional, TypedDict
-
-        import re
-        import re
+import re
 
 """
 MeowLogger Modular Core System
@@ -66,11 +64,7 @@ class FileWatcher:
     """Modular file watcher with pluggable handlers"""
 
     def __init__(self, poll_interval: float = 0.1):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+        """Initialize file watcher with poll interval."""
         self.watched_files: Dict[str, int] = {}  # path -> last_position
         self.handlers: List[Callable[[str, str], None]] = []
         self.running: bool = False
@@ -161,12 +155,9 @@ class LogLevelParser(LogProcessor):
     ]
 
     def __init__(self):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
-            (re.compile(_pattern, re.I), _group) for _pattern, group in self.LEVEL_PATTERNS
+        """Initialize pattern detector with compiled patterns."""
+        self.patterns = [
+            (re.compile(pattern, re.I), group) for pattern, group in self.LEVEL_PATTERNS
         ]
 
     def process(self, entry: LogEntry) -> Optional[Dict[str, Any]]:
@@ -188,11 +179,8 @@ class PatternDetector(LogProcessor):
     """Detect common patterns in logs"""
 
     def __init__(self):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    """Initialize instance."""
+    pass
             "error": re.compile(r"error|exception|failed", re.I),
             "warning": re.compile(r"warning|warn|caution", re.I),
             "performance": re.compile(r"(\d+\.?\d*)\s*(ms|seconds?|minutes?)", re.I),
@@ -219,12 +207,9 @@ class PatternDetector(LogProcessor):
 class MemoryStorage(LogStorage):
     """In-memory log storage with size limits"""
 
-    def __init__(self, max_entries: int = 10000):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
         self.entries: Deque[LogEntry] = deque(maxlen=max_entries)
         self._lock: threading.Lock = threading.Lock()
 
@@ -266,12 +251,9 @@ class MemoryStorage(LogStorage):
 class FileStorage(LogStorage):
     """File-based log storage with rotation"""
 
-    def __init__(self, log_file: _str, max_size: int = 10 * 1024 * 1024, backup_count: int = 5):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
         self.max_size = max_size
         self.backup_count = backup_count
         self._lock = threading.Lock()
@@ -388,11 +370,8 @@ class MeowLogger:
         start_time: datetime
 
     def __init__(self):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    """Initialize instance."""
+    pass
         self.watcher = FileWatcher()
         self.storage: LogStorage = MemoryStorage()  # Default to memory
         self.processors: List[LogProcessor] = [LogLevelParser(), PatternDetector()]

@@ -15,12 +15,9 @@ Clean separation of concerns with pluggable components
 class APIHandler:
     """Handle API endpoints for the logger"""
 
-    def __init__(self, logger: MeowLogger):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
 
     def handle_logs(self, params: Dict[str, str]) -> Dict[str, Any]:
         """GET /api/logs - Retrieve logs with filters"""
@@ -77,12 +74,9 @@ class APIHandler:
 class WebInterface:
     """Web interface for the logger"""
 
-    def __init__(self, logger: MeowLogger, port: int = 8080):
-    """__init__ function.
-
-    Args:
-        TODO: Add arguments
-    """
+    def __init__(self):
+    """Initialize instance."""
+    pass
         self.port = port
         self.api_handler = APIHandler(_logger)
         self.server = None
