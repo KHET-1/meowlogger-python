@@ -1,0 +1,25 @@
+# Testing
+pytest>=6.0.0
+pytest-cov>=2.0.0
+pytest-mock>=3.0.0
+
+# Code Formatting
+black>=22.0.0
+isort>=5.0.0
+
+# Linting
+flake8>=4.0.0
+mypy>=0.950
+pylint>=2.15.0
+
+# Security
+bandit>=1.7.0
+safety>=2.0.0
+
+# Code Quality
+radon>=5.0.0
+xenon>=0.7.0
+
+# Development Tools
+pre-commit>=2.15.0
+tox>=3.20.0
