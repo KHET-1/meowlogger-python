@@ -1,0 +1,113 @@
+[MASTER]
+# Add files or directories to the blacklist
+ignore = .git,__pycache__,venv,.venv,env,.env,build,dist
+
+# Add files or directories matching the regex patterns to the blacklist
+ignore-patterns = 
+
+# Pickle collected data for later comparisons.
+persistent = yes
+
+# List of plugins (as comma separated values of python modules) to load,
+# usually to register additional checkers.
+load-plugins = pylint.extensions.bad_builtin,
+                pylint.extensions.docparams,
+                pylint.extensions.docstyle,
+                pylint.extensions.mccabe
+
+[FORMAT]
+# Maximum number of characters on a single line.
+max-line-length = 120
+
+# Regexp for a line that is allowed to be longer than the limit.
+ignore-long-lines = ^\s*(# )?<?https?:\/\/\S+>?$
+
+[MESSAGES CONTROL]
+# Only show warnings with the listed confidence levels.
+# confidence=
+
+# Disable the message, report, category or checker with the given id(s).
+disable = C0103,  # invalid-name
+           C0114,  # missing-module-docstring
+           C0115,  # missing-class-docstring
+           C0116,  # missing-function-docstring
+           R0903,  # too-few-public-methods
+           R0913,  # too-many-arguments
+           R0902,  # too-many-instance-attributes
+           R0914,  # too-many-locals
+           R0915,  # too-many-statements
+           W0703,  # broad-except
+           W1203,  # f-string-without-interpolation
+           W0621,  # redefined-outer-name
+           W1202,  # logging-format-interpolation
+           C0301,  # line-too-long
+           C0303,  # trailing-whitespace
+           C0304,  # missing-final-newline
+           C0305,  # trailing-newlines
+           W1201   # logging-not-lazy
+
+[SIMILARITIES]
+# Minimum lines number of a similarity.
+min-similarity-lines = 4
+
+# Ignore imports when computing similarities.
+ignore-imports = yes
+
+[BASIC]
+# Required attributes for module, separated by a comma
+docstring-type = google
+
+# Regular expression which should only match correct module names
+module-rgx = (([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+
+# Regular expression which should only match correct class names
+class-rgx = [A-Z_][a-zA-Z0-9]+$
+
+# Regular expression which should only match correct function names
+function-rgx = [a-z_][a-z0-9_]{2,30}$
+
+# Regular expression which should only match correct method names
+method-rgx = [a-z_][a-z0-9_]{2,30}$
+
+# Regular expression which should only match correct argument names
+argument-rgx = [a-z_][a-z0-9_]{0,30}$
+
+# Regular expression which should only match correct variable names
+variable-rgx = [a-z_][a-z0-9_]{0,30}$
+
+# Good variable names which should always be accepted, separated by a comma
+good-names = i,j,k,ex,Run,_,e,fp,df,fn
+
+[TYPECHECK]
+# List of decorators that produce context managers
+contextmanager-decorators = contextlib.contextmanager
+
+[DESIGN]
+# Maximum number of arguments for function/method
+max-args = 8
+
+# Maximum number of locals for function / method body
+max-locals = 15
+
+# Maximum number of statements in function / method body
+max-statements = 50
+
+# Maximum number of attributes for a class (see R0902)
+max-attributes = 12
+
+# Maximum number of public methods for a class (see R0904)
+max-public-methods = 20
+
+[VARIABLES]
+# List of additional names supposed to be defined in builtins
+additional-builtins = _
+
+[LOGGING]
+# Format style used to check logging format string.
+# Either `%`, `{` or `$` for %-formatting, str.format() or string.Template
+# respectively.
+logging-format-style = %
+
+# Logging modules to check that the string format arguments are in logging
+# function parameter format
+logging-modules = logging

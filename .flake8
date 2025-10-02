@@ -1,0 +1,36 @@
+[flake8]
+# Maximum line length
+max-line-length = 120
+
+# Exclude directories and files
+exclude = .git,__pycache__,venv,.venv,env,.env,build,dist
+
+# Ignore specific error codes
+# E203 - Whitespace before ':' (can conflict with black formatter)
+# W503 - Line break occurred before a binary operator
+# E501 - Line too long (handled by max-line-length)
+# F401 - Module imported but unused (handled by isort)
+# E402 - Module level import not at top of file (handled by isort)
+ignore = E203, W503, E501, F401, E402
+
+# Maximum complexity (McCabe complexity)
+max-complexity = 10
+
+# Show the source code for each error
+show-source = True
+
+# Show the filename for each error
+filename = *
+
+# Count total number of each type of error
+count = True
+
+# Output format (default is default)
+format = default
+
+# Exclude specific files or directories
+per-file-ignores =
+    # Ignore line length in tests
+    tests/*.py: E501
+    # Ignore import errors in __init__.py
+    */__init__.py: F401
