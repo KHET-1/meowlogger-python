@@ -22,3 +22,5 @@ per-file-ignores =
     check_remaining_issues.py:F821
     modular_web_interface.py:F821
     modular-web-interface.py:F821
+    modular_core.py:F821
+    modular-core-logger.py:F821
