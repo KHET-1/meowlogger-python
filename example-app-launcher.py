@@ -23,11 +23,15 @@ from modular_web_interface import WebInterface
 class CatProcessor(LogProcessor):
     """Detect cat-related content in logs"""
 
+    def __init__(self):
+        """Initialize with cat-related words."""
+        self.cat_words = ["cat", "kitten", "meow", "purr", "feline"]
+
     def process(self, entry):
         """Process log entry."""
         message_lower = entry.message.lower()
 
-        for _word in cat_words:
+        for word in self.cat_words:
             if word in message_lower:
                 return {"cat_related": True, "cat_word": word}
         return None
@@ -41,11 +45,11 @@ class SeverityProcessor(LogProcessor):
         message_lower = entry.message.lower()
 
         # Severity keywords
-        if any(word in message_lower for _word in ["critical", "fatal", "emergency"]):
+        if any(word in message_lower for word in ["critical", "fatal", "emergency"]):
             return {"severity": "CRITICAL"}
-        elif any(word in message_lower for _word in ["error", "fail", "exception"]):
+        elif any(word in message_lower for word in ["error", "fail", "exception"]):
             return {"severity": "HIGH"}
-        elif any(word in message_lower for _word in ["warn", "warning", "caution"]):
+        elif any(word in message_lower for word in ["warn", "warning", "caution"]):
             return {"severity": "MEDIUM"}
 
         return None
@@ -79,13 +83,13 @@ class MeowLoggerApp:
 
     def start_web(self, port=8080):
         """Start web interface"""
-        self.web_interface = WebInterface(self.logger, _port)
+        self.web_interface = WebInterface(self.logger, port)
         self.web_interface.start()
 
-    def add_watch(self, _path):
+    def add_watch(self, path):
         """Add path to watch"""
         try:
-            self.logger.watch(_path)
+            self.logger.watch(path)
             print(f"✓ Watching: {path}")
         except Exception as e:
             print(f"✗ Error watching {path}: {e}")
@@ -156,16 +160,16 @@ def interactive_mode():
     web_choice = input("\nEnable web interface? (y/n): ").strip().lower()
     if web_choice == "y":
         port = input("Port (default 8080): ").strip() or "8080"
-        app.start_web(int(_port))
+        app.start_web(int(port))
         print(f"\n✨ Web interface: http://localhost:{port}")
 
     # Add watch paths
-    print("\nAdd paths to watch (empty line to _finish):")
+    print("\nAdd paths to watch (empty line to finish):")
     while True:
         path = input("Path: ").strip()
         if not path:
             break
-        app.add_watch(_path)
+        app.add_watch(path)
 
     # Run
     app.run()
@@ -246,7 +250,7 @@ Examples:
 
     # Add watch paths
     for _path in args.watch:
-        app.add_watch(_path)
+        app.add_watch(path)
 
     # Run
     app.run()
