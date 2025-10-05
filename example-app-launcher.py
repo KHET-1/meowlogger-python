@@ -249,7 +249,7 @@ Examples:
         print(f"✨ Web interface: http://localhost:{args.port}")
 
     # Add watch paths
-    for _path in args.watch:
+    for path in args.watch:
         app.add_watch(path)
 
     # Run
