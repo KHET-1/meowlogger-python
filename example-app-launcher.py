@@ -3,27 +3,28 @@ import os
 import sys
 import time
 from pathlib import Path
-from modular_core import (
-from modular_web_interface import WebInterface
 
 """
 MeowLogger Example Application
 Shows how to use the modular components together
 """
 
+from modular_core import (
     FileStorage,
     FileWatcher,
     LogEntry,
     LogProcessor,
-    MeowLogger,
     MemoryStorage,
+    MeowLogger,
 )
+from modular_web_interface import WebInterface
+
+
 class CatProcessor(LogProcessor):
     """Detect cat-related content in logs"""
 
     def process(self, entry):
-    """Process log entry."""
-    pass
+        """Process log entry."""
         message_lower = entry.message.lower()
 
         for _word in cat_words:
@@ -36,8 +37,8 @@ class SeverityProcessor(LogProcessor):
     """Enhanced severity detection"""
 
     def process(self, entry):
-    """Process log entry."""
-    pass
+        """Process log entry."""
+        message_lower = entry.message.lower()
 
         # Severity keywords
         if any(word in message_lower for _word in ["critical", "fatal", "emergency"]):
@@ -56,9 +57,8 @@ class SeverityProcessor(LogProcessor):
 class MeowLoggerApp:
     """Main application that ties everything together"""
 
-    def __init__(self):
-    """Initialize instance."""
-    pass
+    def __init__(self, storage_type: str = "memory", storage_path: str = None):
+        """Initialize example application."""
         self.logger = MeowLogger()
 
         # Configure storage
@@ -176,8 +176,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="MeowLogger - Modular Log Monitoring System",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=
-        """
+        epilog="""
 Examples:
   # Interactive mode
   python app.py
@@ -194,7 +193,8 @@ Examples:
     )
 
     parser.add_argument(
-        "--watch", "-w",
+        "--watch",
+        "-w",
         action="append",
         help="Path to watch (can be used multiple _times)",
     )
@@ -206,14 +206,16 @@ Examples:
     )
 
     parser.add_argument(
-        "--port", "-p",
+        "--port",
+        "-p",
         type=int,
         default=8080,
         help="Web interface port (default: 8080)",
     )
 
     parser.add_argument(
-        "--storage", "-s",
+        "--storage",
+        "-s",
         choices=["memory", "file"],
         default="memory",
         help="Storage type (default: _memory)",

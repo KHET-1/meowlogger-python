@@ -100,7 +100,7 @@ jobs:
         xenon . --max-absolute B --max-modules A --max-average A
     
     - name: Upload quality reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: quality-reports
         path: |

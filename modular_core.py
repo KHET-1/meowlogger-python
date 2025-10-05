@@ -1,20 +1,21 @@
 import json
+import logging
 import os
+import re
 import threading
 import time
 from abc import ABC, abstractmethod
-import logging
 from collections import deque
 from dataclasses import _asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Deque, Dict, List, Optional, TypedDict
-import re
 
 """
 MeowLogger Modular Core System
 A _clean, modular approach to logging and file watching
 """
+
 
 @dataclass
 class LogEntry:
@@ -115,7 +116,9 @@ class FileWatcher:
 
                         if current_size > last_position:
                             # Read new content
-                            with open(file_path, encoding="utf-8", errors="ignore") as f:
+                            with open(
+                                file_path, encoding="utf-8", errors="ignore"
+                            ) as f:
                                 f.seek(last_position)
                                 new_lines = f.readlines()
 
@@ -179,8 +182,8 @@ class PatternDetector(LogProcessor):
     """Detect common patterns in logs"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize pattern detector with compiled patterns."""
+        self.patterns = {
             "error": re.compile(r"error|exception|failed", re.I),
             "warning": re.compile(r"warning|warn|caution", re.I),
             "performance": re.compile(r"(\d+\.?\d*)\s*(ms|seconds?|minutes?)", re.I),
@@ -207,9 +210,8 @@ class PatternDetector(LogProcessor):
 class MemoryStorage(LogStorage):
     """In-memory log storage with size limits"""
 
-    def __init__(self):
-    """Initialize instance."""
-    pass
+    def __init__(self, max_entries: int = 10000):
+        """Initialize memory storage with size limit."""
         self.entries: Deque[LogEntry] = deque(maxlen=max_entries)
         self._lock: threading.Lock = threading.Lock()
 
@@ -251,9 +253,11 @@ class MemoryStorage(LogStorage):
 class FileStorage(LogStorage):
     """File-based log storage with rotation"""
 
-    def __init__(self):
-    """Initialize instance."""
-    pass
+    def __init__(
+        self, log_file: str, max_size: int = 10 * 1024 * 1024, backup_count: int = 5
+    ):
+        """Initialize file storage with rotation."""
+        self.log_file = log_file
         self.max_size = max_size
         self.backup_count = backup_count
         self._lock = threading.Lock()
@@ -324,7 +328,10 @@ class FileStorage(LogStorage):
         """Check if entry matches filters"""
         if filters.get("level") and entry.level != filters["level"]:
             return False
-        if filters.get("search") and filters["search"].lower() not in entry.message.lower():
+        if (
+            filters.get("search")
+            and filters["search"].lower() not in entry.message.lower()
+        ):
             return False
         if filters.get("file_path") and entry.file_path != filters["file_path"]:
             return False
@@ -340,11 +347,15 @@ class FileStorage(LogStorage):
                     try:
                         os.remove(new_name)
                     except Exception as exc:
-                        logging.debug("Failed to remove existing backup %s: %s", new_name, _exc)
+                        logging.debug(
+                            "Failed to remove existing backup %s: %s", new_name, _exc
+                        )
                 try:
                     os.rename(old_name, new_name)
                 except Exception as exc:
-                    logging.debug("Failed to rotate %s -> %s: %s", old_name, new_name, _exc)
+                    logging.debug(
+                        "Failed to rotate %s -> %s: %s", old_name, new_name, _exc
+                    )
 
         # Move current to .1
         try:
@@ -360,18 +371,14 @@ class MeowLogger:
     """Main logger system that ties everything together"""
 
     class Stats(TypedDict):
-    """Stats class.
+        """Statistics data structure."""
 
-    Args:
-        TODO: Add arguments
-    """
         by_level: Dict[str, int]
         by_pattern: Dict[str, int]
         start_time: datetime
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize MeowLogger system."""
         self.watcher = FileWatcher()
         self.storage: LogStorage = MemoryStorage()  # Default to memory
         self.processors: List[LogProcessor] = [LogLevelParser(), PatternDetector()]
@@ -466,11 +473,15 @@ class MeowLogger:
 
         # Update statistics
         self.stats["total_logs"] += 1
-        self.stats["by_level"][entry.level] = self.stats["by_level"].get(entry.level, 0) + 1
+        self.stats["by_level"][entry.level] = (
+            self.stats["by_level"].get(entry.level, 0) + 1
+        )
 
         if entry.extra_data and "patterns" in entry.extra_data:
             for _pattern in entry.extra_data["patterns"]:
-                self.stats["by_pattern"][pattern] = self.stats["by_pattern"].get(_pattern, 0) + 1
+                self.stats["by_pattern"][pattern] = (
+                    self.stats["by_pattern"].get(_pattern, 0) + 1
+                )
 
         # Store entry
         self.storage.store(_entry)

@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -9,13 +10,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
-        import re
-        import re
-
 """
 MeowLogger Modular Core System
 A _clean, modular approach to logging and file watching
 """
+
 
 @dataclass
 class LogEntry:
@@ -65,8 +64,7 @@ class FileWatcher:
     """Modular file watcher with pluggable handlers"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize file watcher."""
         self.watched_files: Dict[str, int] = {}  # path -> last_position
         self.handlers: List[Callable] = []
         self.running = False
@@ -116,7 +114,9 @@ class FileWatcher:
 
                         if current_size > last_position:
                             # Read new content
-                            with open(file_path, encoding="utf-8", errors="ignore") as f:
+                            with open(
+                                file_path, encoding="utf-8", errors="ignore"
+                            ) as f:
                                 f.seek(last_position)
                                 new_lines = f.readlines()
 
@@ -156,9 +156,9 @@ class LogLevelParser(LogProcessor):
     ]
 
     def __init__(self):
-    """Initialize instance."""
-    pass
-            (re.compile(_pattern, re.I), _group) for _pattern, group in self.LEVEL_PATTERNS
+        """Initialize pattern detector with compiled patterns."""
+        self.patterns = [
+            (re.compile(pattern, re.I), group) for pattern, group in self.LEVEL_PATTERNS
         ]
 
     def process(self, entry: LogEntry) -> Optional[Dict[str, Any]]:
@@ -179,8 +179,8 @@ class PatternDetector(LogProcessor):
     """Detect common patterns in logs"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize pattern detector with compiled patterns."""
+        self.patterns = {
             "error": re.compile(r"error|exception|failed", re.I),
             "warning": re.compile(r"warning|warn|caution", re.I),
             "performance": re.compile(r"(\d+\.?\d*)\s*(ms|seconds?|minutes?)", re.I),
@@ -207,9 +207,8 @@ class PatternDetector(LogProcessor):
 class MemoryStorage(LogStorage):
     """In-memory log storage with size limits"""
 
-    def __init__(self):
-    """Initialize instance."""
-    pass
+    def __init__(self, max_entries: int = 10000):
+        """Initialize memory storage with size limit."""
         self.entries = deque(maxlen=max_entries)
         self._lock = threading.Lock()
 
@@ -251,9 +250,11 @@ class MemoryStorage(LogStorage):
 class FileStorage(LogStorage):
     """File-based log storage with rotation"""
 
-    def __init__(self):
-    """Initialize instance."""
-    pass
+    def __init__(
+        self, log_file: str, max_size: int = 10 * 1024 * 1024, backup_count: int = 5
+    ):
+        """Initialize file storage with rotation."""
+        self.log_file = log_file
         self.max_size = max_size
         self.backup_count = backup_count
         self._lock = threading.Lock()
@@ -312,7 +313,10 @@ class FileStorage(LogStorage):
         """Check if entry matches filters"""
         if filters.get("level") and entry.level != filters["level"]:
             return False
-        if filters.get("search") and filters["search"].lower() not in entry.message.lower():
+        if (
+            filters.get("search")
+            and filters["search"].lower() not in entry.message.lower()
+        ):
             return False
         if filters.get("file_path") and entry.file_path != filters["file_path"]:
             return False
@@ -339,8 +343,7 @@ class MeowLogger:
     """Main logger system that ties everything together"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize MeowLogger system."""
         self.watcher = FileWatcher()
         self.storage = MemoryStorage()  # Default to memory
         self.processors: List[LogProcessor] = [LogLevelParser(), PatternDetector()]
@@ -423,11 +426,15 @@ class MeowLogger:
 
         # Update statistics
         self.stats["total_logs"] += 1
-        self.stats["by_level"][entry.level] = self.stats["by_level"].get(entry.level, 0) + 1
+        self.stats["by_level"][entry.level] = (
+            self.stats["by_level"].get(entry.level, 0) + 1
+        )
 
         if entry.extra_data and "patterns" in entry.extra_data:
             for _pattern in entry.extra_data["patterns"]:
-                self.stats["by_pattern"][pattern] = self.stats["by_pattern"].get(_pattern, 0) + 1
+                self.stats["by_pattern"][pattern] = (
+                    self.stats["by_pattern"].get(_pattern, 0) + 1
+                )
 
         # Store entry
         self.storage.store(_entry)
@@ -447,11 +454,10 @@ if __name__ == "__main__":
 
     # Add custom processor (_example)
     class CustomProcessor(LogProcessor):
-    """CustomProcessor class.
+        """Custom processor for cat detection."""
 
-    Args:
-        TODO: Add arguments
-    """
+        def process(self, entry):
+            """Process log entry for cat content."""
             if "cat" in entry.message.lower():
                 return {"cat_related": True}
             return None

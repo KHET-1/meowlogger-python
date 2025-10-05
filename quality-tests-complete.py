@@ -1,3 +1,4 @@
+import gc
 import os
 import shutil
 import sys
@@ -7,8 +8,6 @@ import time
 import unittest
 from datetime import datetime
 
-import gc
-
 from modular_core import (
     FileStorage,
     FileWatcher,
@@ -16,12 +15,11 @@ from modular_core import (
     LogLevelParser,
     LogProcessor,
     LogStorage,
-    MeowLogger,
     MemoryStorage,
+    MeowLogger,
     PatternDetector,
 )
 from modular_web_interface import APIHandler
-
 
 """
 MeowLogger Complete Test Suite

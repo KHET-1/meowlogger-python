@@ -1,9 +1,9 @@
+import ast
 import os
 import re
 import sys
-import ast
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 #!/usr/bin/env python3
 """

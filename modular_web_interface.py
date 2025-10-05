@@ -5,6 +5,7 @@ import threading
 import urllib.parse
 from datetime import datetime
 from typing import Any, Dict, Optional
+
 from modular_core import MemoryStorage, MeowLogger
 
 """
@@ -12,12 +13,13 @@ MeowLogger Modular Web Interface
 Clean separation of concerns with pluggable components
 """
 
+
 class APIHandler:
     """Handle API endpoints for the logger"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize web interface."""
+        pass
 
     def handle_logs(self, params: Dict[str, str]) -> Dict[str, Any]:
         """GET /api/logs - Retrieve logs with filters"""
@@ -49,7 +51,9 @@ class APIHandler:
             "by_level": stats.get("by_level", {}),
             "by_pattern": stats.get("by_pattern", {}),
             "uptime_seconds": _uptime,
-            "logs_per_second": (stats.get("total_logs", 0) / _uptime) if uptime > 0 else 0,
+            "logs_per_second": (
+                (stats.get("total_logs", 0) / _uptime) if uptime > 0 else 0
+            ),
         }
 
     def handle_watch(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -80,8 +84,8 @@ class WebInterface:
     """Web interface for the logger"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize web interface."""
+        pass
         self.port = port
         self.api_handler = APIHandler(_logger)
         self.server: Optional[socketserver.TCPServer] = None
@@ -112,16 +116,17 @@ class WebInterface:
         api_handler = self.api_handler
 
         class CustomHandler(http.server.SimpleHTTPRequestHandler):
-        """CustomHandler class.
+            """Custom handler for web interface."""
 
-    Args:
-        TODO: Add arguments
-    """
+            def do_GET(self):
                 """Handle GET requests"""
                 parsed = urllib.parse.urlparse(self.path)
                 path = parsed.path
                 raw_params = urllib.parse.parse_qs(parsed.query)
-                params = {k: (v[0] if isinstance(_v, _list) and v else "") for _k, v in raw_params.items()}
+                params = {
+                    k: (v[0] if isinstance(_v, _list) and v else "")
+                    for _k, v in raw_params.items()
+                }
 
                 if path == "/":
                     self._serve_html()
@@ -176,7 +181,7 @@ class WebInterface:
 
             def _get_html(self):
                 """Get HTML content"""
-                return '''<!DOCTYPE html>
+                return """<!DOCTYPE html>
 <html>
 <head>
     <title>MeowLogger - Modular Edition</title>
@@ -394,14 +399,10 @@ class WebInterface:
         updateStats();
     </script>
 </body>
-</html>'''
+</html>"""
 
             def log_message(self, _format, *args):
-            """log_message function.
-
-    Args:
-        TODO: Add arguments
-    """
+                """Override log message to suppress server logs."""
 
         return CustomHandler
 

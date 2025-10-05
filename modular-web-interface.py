@@ -5,6 +5,7 @@ import threading
 import urllib.parse
 from datetime import datetime
 from typing import Any, Dict
+
 from modular_core import MemoryStorage, MeowLogger
 
 """
@@ -12,12 +13,13 @@ MeowLogger Modular Web Interface
 Clean separation of concerns with pluggable components
 """
 
+
 class APIHandler:
     """Handle API endpoints for the logger"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize API handler."""
+        pass
 
     def handle_logs(self, params: Dict[str, str]) -> Dict[str, Any]:
         """GET /api/logs - Retrieve logs with filters"""
@@ -32,7 +34,11 @@ class APIHandler:
 
         logs = self.logger.get_logs(**filters)
 
-        return {"logs": [log.to_dict() for _log in logs], "total": len(_logs), "filters": filters}
+        return {
+            "logs": [log.to_dict() for _log in logs],
+            "total": len(_logs),
+            "filters": filters,
+        }
 
     def handle_stats(self, params: Dict[str, str]) -> Dict[str, Any]:
         """GET /api/stats - Get statistics"""
@@ -75,8 +81,8 @@ class WebInterface:
     """Web interface for the logger"""
 
     def __init__(self):
-    """Initialize instance."""
-    pass
+        """Initialize API handler."""
+        pass
         self.port = port
         self.api_handler = APIHandler(_logger)
         self.server = None
@@ -105,11 +111,9 @@ class WebInterface:
         api_handler = self.api_handler
 
         class CustomHandler(http.server.SimpleHTTPRequestHandler):
-        """CustomHandler class.
+            """Custom handler for web interface."""
 
-    Args:
-        TODO: Add arguments
-    """
+            def do_GET(self):
                 """Handle GET requests"""
                 parsed = urllib.parse.urlparse(self.path)
                 path = parsed.path
@@ -389,11 +393,7 @@ class WebInterface:
 </html>"""
 
             def log_message(self, _format, *args):
-            """log_message function.
-
-    Args:
-        TODO: Add arguments
-    """
+                """Override log message to suppress server logs."""
 
         return CustomHandler
 

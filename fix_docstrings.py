@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Quick script to fix malformed docstrings."""
 
-import re
 import glob
+import re
 
 
 def fix_docstrings():
